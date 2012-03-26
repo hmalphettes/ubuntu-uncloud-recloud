@@ -6,9 +6,8 @@ These VMs are configured to run on EC2, consumes the EC2 init parameters and mor
 More info: [Canonical's cloud portal](http://cloud.ubuntu.com).
 
 ## Uncloud the cloud images
-In case it is needed to run those ubuntu builds on a local hypervisor it is required to initialize the kernel with a few parameters and to disable the cloud-init service.
-
-The following script automates such a task.
+To run those ubuntu builds on a local hypervisor, some changes are necessary.
+The following script automates those changes.
 
 ## Usage
 
@@ -34,5 +33,5 @@ Ready to be run in your favorite hypervisor.
 - VBoxManage: vmdk conversion (optional)
 
 ## TODO
-Re-cloud: re-enable cloud-init, reset the ubuntu password, import on EC2 and publish as an AMI
-Export-from-ec2: create a vm disk from an ebs, uncloud, push to S3 for download.
+- Re-cloud: re-enable cloud-init, reset the ubuntu password, import on EC2 and publish as an AMI
+- Export-from-ec2: create a vm disk from an ebs, uncloud, push to S3 for download.
