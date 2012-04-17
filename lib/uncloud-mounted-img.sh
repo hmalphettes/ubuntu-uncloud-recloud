@@ -23,6 +23,16 @@ if [ ! -f "$grub_default" ]; then
   exit 1
 fi
 
+echo "chroot and set the ubuntu user's password ? (default yes)"
+read response
+if [ -z "$response" ]; then
+  echo "Enter the password for the ubuntu user (default 'ubuntu' no quotes)"
+  read password
+  password=`echo $password`
+  [ -z "$password" ] && password="ubuntu"
+  sudo chroot $imagedir sh -c "echo ubuntu:$password | chpasswd"
+fi
+[ -z "$password" ] && password="ubuntu"
 
 ## Add the local uncloud arguments in grub:
 # when we run the VM on a local hypervisor, we add some arguments
@@ -37,7 +47,7 @@ sudo sed -i -e 's/^[[:space:]]*linux[[:space:]]*\(\/boot.*\) \(root=[^ ]*\) \(.*
 still=$(grep uncloud-init $grub_cfg)
 if [ -z "$still" ]; then
 # let's insert it then; only on the first entry.
-sudo sed -i -e 's/root=LABEL=cloudimg-rootfs ro[[:space:]]*console=ttyS0/root=LABEL=cloudimg-rootfs ro init=\/usr\/lib\/cloud-init\/uncloud-init ds=nocloud ubuntu-pass=ubuntu console=ttyS0/' $grub_cfg
+sudo sed -i -e 's/root=LABEL=cloudimg-rootfs ro[[:space:]]*console=ttyS0/root=LABEL=cloudimg-rootfs ro init=\/usr\/lib\/cloud-init\/uncloud-init ds=nocloud ubuntu-pass='$password' console=ttyS0/' $grub_cfg
 still=$(grep uncloud-init $grub_cfg)
 if [ -z "$still" ]; then
   echo "sed failed to insert 'uncloud-init' in $grub_cfg"
@@ -56,6 +66,8 @@ cloud_init="$imagedir/etc/init/cloud-init.conf"
 if [ -f "$cloud_init" ]; then
   echo "Disabling $cloud_init"
 	sudo mv $cloud_init $cloud_init.disabled
+else
+  echo "Unable to find the cloud-init.conf in $imagedir/etc/init/cloud-init.conf"
 fi
 
 # for now
