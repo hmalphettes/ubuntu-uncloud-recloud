@@ -83,5 +83,21 @@ if [ -z "$response"]; then
   sudo sed -i -e 's/^#*[[:space:]]*UsePAM[[:space:]].*$/UsePAM no/' $imagedir/etc/ssh/sshd_config
 fi
 
+[ -f "$imagedir/home/ubuntu/.ssh/authorized_keys" ] && rm "$imagedir/home/ubuntu/.ssh/authorized_keys"
+[ -f "$imagedir/home/ubuntu/.ssh/known_hosts" ] && rm "$imagedir/home/ubuntu/.ssh/known_hosts"
+if [ -d "$imagedir/homeubuntu/.ssh" ]; then
+  echo "$imagedir/home/ubuntu/.ssh is cleaned of authorized_keys and known_hosts. Delete it all together? (default yes)"
+  read response
+  [ -z "$response" ] && rm -rf $imagedir/home/ubuntu/.ssh
+fi
+
+if [ -d $imagedir/etc/chef ]; then
+  echo "Delete the chef-server connection parameters: $imagedir/etc/chef/*.pem ?"
+  read response
+  if [ -z "$response" ]; then
+    rm $imagedir/etc/chef/*.pem
+  fi
+fi
+
 # for now
 exit 0

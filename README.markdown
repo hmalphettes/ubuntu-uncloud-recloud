@@ -69,10 +69,11 @@ Check the script and run it:
 6. Run the script lib/recloud-mounted-img.sh to reverse uncloud.
     - reset the grub config to a ubuntu cloud image
     - reset the ubuntu user's password
-    - harden the sshd_config to only accept public keys for authentication
+    - harden the /etc/sshd\_config to only accept public keys for authentication
     - delete the chef-connection parameters if present
+    - delete the /home/ubuntu/.ssh/ keys and known\_hosts
     - wait for the user to manually tweak other things
-7..Create a new EBS volume, attach it and mount it to the current instance.
+7. Create a new EBS volume, attach it and mount it to the current instance.
 8. Copy into the VM's content into the EBS volume.
 9. Unmount everything
 10. Create a snapshot of the EBS volument and publish it as an AMI.
