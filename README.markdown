@@ -1,14 +1,21 @@
-# Ubuntu cloud images helper
-## Ubuntu's cloud images
+# Uncloud / Recloud
+Ubuntu cloud images helper and EC2/Openstack AMI publisher
+
+## Uncloud
+
 Canonical provides a build of ubuntu setup for OpenStack Amazon EC2.
 These VMs are configured to run on EC2, consumes the EC2 init parameters and more.
 
 More info: [Canonical's cloud portal](http://cloud.ubuntu.com).
 
-## Uncloud the cloud images
 To run those ubuntu builds on a local hypervisor, some changes are necessary.
-The following script automates those changes.
+The uncloud script runs through those changes.
 
+## EC2-Recloud
+Import a ubuntu VM archive into EC2 and publish it as an EBS based AMI.
+
+
+# Uncloud
 ## Usage
 
     git clone http://github.com/hmalphettes/ubuntu-uncloud-recloud
@@ -32,6 +39,41 @@ Ready to be run in your favorite hypervisor.
 - qemu-img, qemu-nbd
 - VBoxManage: vmdk conversion (optional)
 
-## TODO
-- Re-cloud: re-enable cloud-init, reset the ubuntu password, import on EC2 and publish as an AMI
-- Export-from-ec2: create a vm disk from an ebs, uncloud, push to S3 for download.
+# EC2-Recloud
+## Usage
+
+Define the EC2 keys as environment variables:
+
+    AWS_USERID=""
+    AWS_ACCESSKEY=""
+    AWS_SECRETKEY=""
+
+Define the URL of the Ubuntu VM archive to download as the environment varable
+
+    imageurl=...
+
+Place the pk-*.pem and cert-*.pem files in ~/.ec2
+Check the script and run it:
+
+    git clone http://github.com/hmalphettes/ubuntu-uncloud-recloud
+    cd ubuntu-uncloud-recloud
+    ./recloud.sh
+
+## Description
+
+1. Downoad the VM archive (if necessary)
+2. Unzip it (if necessary
+3. Locate the VM file (if necessary)
+4. Clone the VM file into a raw VM file if the VM file is a vmdk (necessary for qemu-nbd).
+5. Mount the VM file on the file system with qemu-nbd
+6. Run the script lib/recloud-mounted-img.sh to reverse uncloud.
+    - reset the grub config to a ubuntu cloud image
+    - reset the ubuntu user's password
+    - harden the sshd_config to only accept public keys for authentication
+    - delete the chef-connection parameters if present
+    - wait for the user to manually tweak other things
+7..Create a new EBS volume, attach it and mount it to the current instance.
+8. Copy into the VM's content into the EBS volume.
+9. Unmount everything
+10. Create a snapshot of the EBS volument and publish it as an AMI.
+

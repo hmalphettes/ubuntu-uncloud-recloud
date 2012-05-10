@@ -5,7 +5,7 @@ if [ -n "$1" -a -s "$1" ];then
 else
   qcow2_file=$(ls `pwd`/*.img)
   if [ ! -s "$qcow2_file" ]; then
-	  echo "Download latest ubuntu? (default yes)"
+    echo "Download latest ubuntu? (default yes)"
     read response
     if [ -n "$response" ]; then
       echo "Bye then!"
