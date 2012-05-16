@@ -24,7 +24,7 @@ if [ -z "$akiid" ]; then
   exit 1
 fi
 
-[ -z "$imageurl"] && export imageurl="<% node[:recloud][:imageurl] %>"
+export imageurl="<% node[:recloud][:imageurl] %>"
 
 export ec2_keys_dir="<%= node[:recloud][:ec2_keys_dir] %>"
 export EC2_CERT=$(echo $ec2_keys_dir/cert-*.pem)
