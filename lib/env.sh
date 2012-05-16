@@ -2,6 +2,11 @@
 # Environmental values in Open-Stack
 # No secrets here.
 # No need to execute this more than once.
+
+if [ -f $HOME/build_params.sh ]; then
+  source $HOME/build_params.sh
+fi
+
 [ -z "$codename" ] && export codename=oneiric
 [ -z "$arch" ] && export arch=x86_64
 [ -z "$arch2" ] && export arch2=amd64
@@ -31,9 +36,50 @@ if [ -z "$EC2_PRIVATE_KEY" ]; then
   echo "EC2_PRIVATE_KEY undefined; Can't find a $HOME/.ec2/pk-*.pem"
   exit 13
 fi
-aws_missing_key="AWS_USERID='$AWS_USERID'\nAWS_ACCESSKEY='$AWS_ACCESSKEY'\nAWS_SECRETKEY='$AWS_SECRETKEY'"
-[ -z "$AWS_USERID" ] && echo "AWS_USERID not defined" && exit 13
-[ -z "$AWS_ACCESSKEY" ] && echo "AWS_ACCESSKEY not defined" && exit 13
-[ -z "$AWS_SECRETKEY" ] && echo "AWS_SECRETKEY not defined" && exit 13
 
-[ -z "$imageurl" ] && echo "Undefined imageurl; Missing the URL of the VM image (or zip or tar.gz of it) to publish as an AMI." && exit 14
+if [ -z "$AWS_USERID" ]; then
+  echo "AWS_USERID not defined"
+  echo "Enter AWS_USERID now. The format is 1111-2222-3333"
+  read AWS_USERID
+  export AWS_USERID
+  aws_save=true
+fi
+
+if [ -z "$AWS_ACCESSKEY" ]; then
+  echo "AWS_ACCESSKEY not defined"
+  echo "Enter the AWS_ACCESSKEY now. The format is ABCDEFGHIKLMNOPQRSTU"
+  read AWS_ACCESSKEY
+  export AWS_ACCESSKEY
+  aws_save=true
+fi
+if [ -z "$AWS_SECRETKEY" ]; then
+  echo "AWS_SECRETKEY not defined"
+  echo "Enter the AWS_SECRETKEY now. The format is 1Ab/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  read AWS_SECRETKEY
+  export AWS_SECRETKEY
+  aws_save=true
+fi
+if [ -z "$imageurl" ]; then
+  echo "Undefined imageurl; Missing the URL of the VM image (or zip or tar.gz of it) to publish as an AMI."
+  echo "Enter the URL to download the archive of the VM image (*.zip, *.tar.gz, *.vmd, *.qcow2, *.raw)"
+  read imageurl
+  aws_save=true
+  export imageurl
+fi
+
+if [ -n "$aws_save" && -f "$HOME/build_params.sh" ]; then
+  if [ -z "$AWS_USERID" -o -z "$AWS_ACCESSKEY" -o -z "$AWS_SECRETKEY" ]; then
+    echo "Still missing an AWS key: AWS_USERID='$AWS_USERID'\nAWS_ACCESSKEY='$AWS_ACCESSKEY'\nAWS_SECRETKEY='$AWS_SECRETKEY'"
+    exit 13
+  fi
+  echo "Save the settings in $HOME/build_params.sh (default yes, Y|N) ?"
+  read response
+  if [ -z "$response" -o "Y" == "$response" ]; then
+    sed -i -e "s/^AWS_USERID=.*/AWS_USERID=$AWS_USERID/"
+    sed -i -e "s/^AWS_SECRETKEY=.*/AWS_SECRETKEY=$AWS_SECRETKEY/"
+    sed -i -e "s/^AWS_ACCESSKEY=.*/AWS_ACCESSKEY=$AWS_ACCESSKEY/"
+    echo "saved"
+  fi
+
+fi
+

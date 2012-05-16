@@ -1,0 +1,5 @@
+maintainer       "Intalio inc"
+maintainer_email "hmalphettes@intalio.com"
+license          "MIT License"
+description      "Installs/Maintains a VM on EC2/Openstack to run recloud.sh and publish an AMI"
+version          "0.1"

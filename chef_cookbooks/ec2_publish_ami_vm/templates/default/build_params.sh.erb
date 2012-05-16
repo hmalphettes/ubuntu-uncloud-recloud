@@ -1,0 +1,35 @@
+# this file should be sourced
+[ -z "$codename" ] && export codename=<%= node[:recloud][:ubuntu_codename] %>
+[ -z "$arch" ] && export arch=<%= node[:recloud][:arch] %>
+[ -z "$arch2" ] && export arch2=<%= node[:recloud][:arch2] %>
+
+export amisurl=http://uec-images.ubuntu.com/query/$codename/server/released.current.txt
+export zoneurl=http://instance-data/latest/meta-data/placement/availability-zone
+export zone=$(wget -qO- $zoneurl)
+export region=$(echo $zone | perl -pe 's/.$//')
+if [ -z "$region" ]; then
+  echo "Could not read the current region. That is a blocker."
+  exit 1
+fi
+
+export instanceid=$(wget -qO- http://instance-data/latest/meta-data/instance-id)
+export akiid=$(wget -qO- $amisurl | egrep "ebs.$arch2.$region.*paravirtual" | cut -f9)
+export size=<%= node[:recloud][:ebs_size_G] %> #G
+export ariid=$(wget -qO- $amisurl | egrep "ebs.$arch2.$region.*paravirtual" | cut -f10)
+
+export EC2_URL="https://ec2.$region.amazonaws.com"
+
+if [ -z "$akiid" ]; then
+  echo "Failed to read the akiid. Check required"
+  exit 1
+fi
+
+[ -z "$imageurl"] && export imageurl="<% node[:recloud][:imageurl] %>"
+
+export ec2_keys_dir="<%= node[:recloud][:ec2_keys_dir] %>"
+export EC2_CERT=$(echo $ec2_keys_dir/cert-*.pem)
+export EC2_PRIVATE_KEY=$(echo $ec2_keys_dir/pk-*.pem)
+export AWS_USERID="<%= node[:recloud][:aws_userid] %>"
+export AWS_ACCESSKEY="<%= node[:reccloud][:aws_accesskey] %>"
+export AWS_SECRETKEY="<%= node[:recloud][:aws_secretkey] %>"
+

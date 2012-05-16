@@ -1,6 +1,6 @@
 #!/bin/bash
 __dirname=$(dirname `readlink -f $0`)
-source __dirname/lib/env.sh
+source $__dirname/lib/env.sh
 
 export now=`date +%Y%m%d-%H`
 
