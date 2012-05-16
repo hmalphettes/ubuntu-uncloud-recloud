@@ -67,7 +67,7 @@ if [ -z "$imageurl" ]; then
   export imageurl
 fi
 
-if [ -n "$aws_save" i-a -f "$HOME/build_params.sh" ]; then
+if [ -n "$aws_save" -a -f "$HOME/build_params.sh" ]; then
   if [ -z "$AWS_USERID" -o -z "$AWS_ACCESSKEY" -o -z "$AWS_SECRETKEY" ]; then
     echo "Still missing an AWS key: AWS_USERID='$AWS_USERID'\nAWS_ACCESSKEY='$AWS_ACCESSKEY'\nAWS_SECRETKEY='$AWS_SECRETKEY'"
     exit 13
@@ -75,9 +75,10 @@ if [ -n "$aws_save" i-a -f "$HOME/build_params.sh" ]; then
   echo "Save the settings in $HOME/build_params.sh (default yes, Y|N) ?"
   read response
   if [ -z "$response" -o "Y" == "$response" ]; then
-    sed -i -e "s/^AWS_USERID=.*/AWS_USERID=$AWS_USERID/"
-    sed -i -e "s/^AWS_SECRETKEY=.*/AWS_SECRETKEY=$AWS_SECRETKEY/"
-    sed -i -e "s/^AWS_ACCESSKEY=.*/AWS_ACCESSKEY=$AWS_ACCESSKEY/"
+    sed -i -e "s/^export AWS_USERID=.*/export AWS_USERID=$AWS_USERID/" $HOME/build_params.sh
+    sed -i -e "s;^export AWS_SECRETKEY=.*;export AWS_SECRETKEY=$AWS_SECRETKEY;" $HOME/build_params.sh # use semi-column for the sed delimiter as slash can appear elsewhere.
+    sed -i -e "s;^export imageurl=.*;export imageurl=$imageurl;" $HOME/build_params.sh # use semi-column for the sed delimiter as slash can appear elsewhere.
+    sed -i -e "s/^export AWS_ACCESSKEY=.*/export AWS_ACCESSKEY=$AWS_ACCESSKEY/" $HOME/build_params.sh
     echo "saved"
   fi
 
