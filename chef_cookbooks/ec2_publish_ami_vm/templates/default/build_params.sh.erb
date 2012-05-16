@@ -30,6 +30,6 @@ export ec2_keys_dir="<%= node[:recloud][:ec2_keys_dir] %>"
 export EC2_CERT=$(echo $ec2_keys_dir/cert-*.pem)
 export EC2_PRIVATE_KEY=$(echo $ec2_keys_dir/pk-*.pem)
 export AWS_USERID="<%= node[:recloud][:aws_userid] %>"
-export AWS_ACCESSKEY="<%= node[:reccloud][:aws_accesskey] %>"
+export AWS_ACCESSKEY="<%= node[:recloud][:aws_accesskey] %>"
 export AWS_SECRETKEY="<%= node[:recloud][:aws_secretkey] %>"
 

@@ -67,7 +67,7 @@ if [ -z "$imageurl" ]; then
   export imageurl
 fi
 
-if [ -n "$aws_save" && -f "$HOME/build_params.sh" ]; then
+if [ -n "$aws_save" i-a -f "$HOME/build_params.sh" ]; then
   if [ -z "$AWS_USERID" -o -z "$AWS_ACCESSKEY" -o -z "$AWS_SECRETKEY" ]; then
     echo "Still missing an AWS key: AWS_USERID='$AWS_USERID'\nAWS_ACCESSKEY='$AWS_ACCESSKEY'\nAWS_SECRETKEY='$AWS_SECRETKEY'"
     exit 13
