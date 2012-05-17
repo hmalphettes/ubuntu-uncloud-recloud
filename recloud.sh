@@ -45,9 +45,6 @@ if [ -z "$vm_imagefile" ]; then
           else
             tar -zxvf $build_folder/$base_imagefilename -C $build_folder
           fi
-          ls -la $HOME
-    echo "how is it?"
-    exit 0
         fi
       else
           echo "Could not find the downloaded VM $imagefilename"
@@ -75,10 +72,6 @@ if [ -z "$vm_imagefile" ]; then
         #wget $imageurl
         curl -o $build_folder/$base_imagefilename $imageurl
         unzip $build_folder/$imagefilename -d $build_folder
-        ls -la $build_folder/*.zip
-        echo "how is it?"
-        read response
-        exit 0
       else
         wget -O- $imageurl | tar vxzf - -C $build_folder
       fi
