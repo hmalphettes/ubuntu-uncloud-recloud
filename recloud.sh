@@ -309,9 +309,12 @@ pending=$(ec2-describe-snapshots "$snapshotid" | grep pending)
 while [ -n "$pending" ]; do
   # example:
   # SNAPSHOT        snap-5e19df25   vol-235fd14f    pending 2012-02-24T06:45:42+0000        15%     399959105998    10      creating a new ami from intalio_aws_9G-1.0.0.327.raw
-  progress=`echo "$pending" | grep % | sed "s/^ *//;s/ *$//;s/ \{1,\}/ /g" #| cut -d ' ' -f6`
+  # SNAPSHOT  snap-b8c053d4   vol-37a4d854    pending 2012-05-18T03:47:02+0000        95      399959105998    20      creating a new ami from Intalio-Summer12-20120517
+  progress=`echo "$pending" | sed "s/^ *//;s/ *$//;s/ \{1,\}/ /g" #| cut -d ' ' -f6`
   echo "DEBUGGING: pending => $pending"
-  echo "Waiting for the snapshot to complete; progress: $progress"
+  echo "Waiting for the snapshot to complete:"
+  echo $pending
+  echo "       progress (%): $progress"
   sleep 30
   pending=$(ec2-describe-snapshots "$snapshotid" | grep pending)
 done
