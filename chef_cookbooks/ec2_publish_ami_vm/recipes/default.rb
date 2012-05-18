@@ -25,6 +25,7 @@ end
    e2fsprogs
    ec2-api-tools
    qemu-kvm virtualbox-ose
+   makepasswd
   }.each do |p|
   package p do
     action [:install]

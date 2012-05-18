@@ -97,6 +97,7 @@ vm_image_actual_file_extension=`echo ${vm_imagefile#*.}`
 if [ "vmdk" = "$vm_image_actual_file_extension" ]; then
   if [ ! -f "$vm_imagefile.raw" ]; then
     echo "Make a raw disk from the vmdk $vm_imagefile"
+    echo "This process can take 10 minutes. To make sure it is alive, use top on a separate terminal and look for VBoxSVC to be an active process:"
     #VBoxManage convertfromraw --format VMDK $raw_file $vmdk_file
     #qemu-img convert -O raw $vm_imagefile $vm_imagefile.raw
     VBoxManage clonehd -format RAW $vm_imagefile $vm_imagefile.raw
@@ -309,6 +310,7 @@ while [ -n "$pending" ]; do
   # example:
   # SNAPSHOT        snap-5e19df25   vol-235fd14f    pending 2012-02-24T06:45:42+0000        15%     399959105998    10      creating a new ami from intalio_aws_9G-1.0.0.327.raw
   progress=`echo "$pending" | grep % | sed "s/^ *//;s/ *$//;s/ \{1,\}/ /g" #| cut -d ' ' -f6`
+  echo "DEBUGGING: pending => $pending"
   echo "Waiting for the snapshot to complete; progress: $progress"
   sleep 30
   pending=$(ec2-describe-snapshots "$snapshotid" | grep pending)
@@ -326,7 +328,7 @@ if [ -z "$completed" ]; then
 fi
 
 [ -z "$name" ] && name="Intalio-$now"
-[ -z "$description" ] && description="Intalio\ on\ EC2\ built\ at\ $now\ from\ $imagefilename"
+[ -z "$description" ] && description="Intalio_on_EC2_at_$now_from_$imagefilename"
 
 arch=x86_64
 arch2=amd64
@@ -338,7 +340,8 @@ ec2_register_cmd="ec2-register \
  --architecture \"$arch\" \
  --kernel \"$akiid\" \
  --block-device-mapping $ephemeraldev=ephemeral0 \
- --snapshot \"$snapshotid\""
+ --snapshot \"$snapshotid\" \
+ --private-key $EC2_PRIVATE_KEY --cert $EC2_CERT"
 echo "About to register a new ami with"
 echo "$ec2_register_cmd"
 echo "Confirm? (default yes)"
