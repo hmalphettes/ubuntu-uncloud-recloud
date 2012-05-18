@@ -9,7 +9,7 @@ default[:recloud][:aws_accesskey] = ""
 default[:recloud][:aws_secretkey] = ""
 default[:recloud][:ec2_keys_dir] = "$HOME/.ec2"
 # size of the EBS volume in which the VM is copied
-default[:recloud][:ebs_size_G] = "10"
+default[:recloud][:ebs_size_G] = "20"
 
 default[:recloud][:script][:installation_folder] = "/home/ubuntu/ubuntu-uncloud-recloud"
 default[:recloud][:script][:repo] = "https://github.com/hmalphettes/ubuntu-uncloud-recloud.git"
