@@ -351,7 +351,7 @@ echo "Confirm? (default yes)"
 read response
 if [ -z "$response" ]; then
   ami_registered=true
-  $amiid=$($ec2_register_cmd | cut -f2)
+  amiid=$($ec2_register_cmd | cut -f2)
 else
   echo "Not registering the VM"
 fi
