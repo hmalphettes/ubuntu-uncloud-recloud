@@ -12,8 +12,16 @@ To run those ubuntu builds on a local hypervisor, some changes are necessary.
 The uncloud script runs through those changes.
 
 ## EC2-Recloud
-Import a ubuntu VM archive into EC2 and publish it as an EBS based AMI.
+Import an ubuntu VM archive into EC2 and publish it as an EBS based AMI.
 
+Important note: this script assumes that the VM archive can be run by the EC2/Openstack hypervisor.
+Potential pitfalls that this script does not resolve:
+* the hypervisor does not understand the partition
+* the kernel will panic (hint: use the 'virtual' build of the kernel)
+* the runtime parameters passwed to the VM (ssh keys) are not taken into account by the VM (hint: apt-get install cloud-init)
+
+This script is used at the moment with the a VM created from 'uncloud'.
+That type of VM is originally made to run on EC2/Openstack. It works fine when re-imported into it.
 
 # Uncloud
 ## Usage
@@ -77,4 +85,8 @@ Check the script and run it:
 8. Copy into the VM's content into the EBS volume.
 9. Unmount everything
 10. Create a snapshot of the EBS volument and publish it as an AMI.
+
+## TODO
+1- init job to lazy configure the sshd's keyx; just like cloud-init does but we are disabling it)
+2- map 127.0.1.1 to the hostname (not a blocker)
 

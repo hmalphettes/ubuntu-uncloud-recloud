@@ -379,8 +379,12 @@ intalio_vm_disk:   $imagefilename
 
 Test the new AMI using something like:
 
-  export EC2_URL=http://ec2.$region.amazonaws.com
-  ec2-run-instances --key \$USER --instance-type m1.large $amiid
+    export EC2_URL=http://ec2.$region.amazonaws.com
+    ec2-run-instances --key \$USER --instance-type m1.large $amiid
+
+Or from the AWS console:
+
+    https://console.aws.amazon.com/ec2/home?region=us-west-1#launchAmi=$amiid
 
 EOF
 

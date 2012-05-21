@@ -34,6 +34,15 @@ if [ -z "$response" ]; then
 fi
 [ -z "$password" ] && password="ubuntu"
 
+if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]; then
+  # missing host keys for the sshd. they are probably initialized by cloud-init later
+  # but we are disabling cloud-init here.
+  sudo chroot $imagedir sh -c "dpkg-reconfigure openssh-server"
+fi
+
+# something similar with the locale:
+sudo chroot $imagedir sh -c "apt-get install language-pack-en" || true
+
 ## Add the local uncloud arguments in grub:
 # when we run the VM on a local hypervisor, we add some arguments
 # to disable the cloud-init scripts. the linux line in /boot/grub/grub.cfg look like this:
