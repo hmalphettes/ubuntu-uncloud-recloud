@@ -34,14 +34,25 @@ if [ -z "$response" ]; then
 fi
 [ -z "$password" ] && password="ubuntu"
 
-if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]; then
-  # missing host keys for the sshd. they are probably initialized by cloud-init later
-  # but we are disabling cloud-init here.
-  sudo chroot $imagedir sh -c "dpkg-reconfigure openssh-server"
+if [ ! -f "$imagedir/etc/init/sshd" ]; then
+  # make an upstart task to generate sshd keys if there are no sshd keys.
+  __dirname=$(dirname `readlink -f $0`)
+  if [ ! -f $__dirname/ssh_gen_keys.conf ]; then
+    echo "Could not find ssh_gen_keys.conf in $__dirname"
+    exit 1
+  fi
+  sudo cp $__dirname/ssh_gen_keys.conf "$imagedir/etc/init"
 fi
 
 # something similar with the locale:
-sudo chroot $imagedir sh -c "apt-get install language-pack-en" || true
+# note that dpkg-reconfigure locales and locale-gen simply did not work here.
+if [ ! -f $imagedir/etc/default/locale ]; then
+  LANG_TO_SET=en_US.UTF-8
+  LANGUAGE_TO_SET="en_US:en"
+  sudo sh -c "echo \"LANG='$LANG_TO_SET'\" > $imagedir/etc/default/locale"
+  sudo sh -c "echo \"LANGUAGE='$LANGUAGE_TO_SET'\" >> $imagedir/etc/default/locale"
+  sudo chroot $imagedir sh -c "apt-get --no-install-recommends install language-pack-en"
+fi
 
 ## Add the local uncloud arguments in grub:
 # when we run the VM on a local hypervisor, we add some arguments
