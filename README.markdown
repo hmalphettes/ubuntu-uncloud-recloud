@@ -13,6 +13,7 @@ The uncloud script runs through those changes.
 
 ## EC2-Recloud
 Import an ubuntu VM archive into EC2 and publish it as an EBS based AMI.
+A lot of this work is derived from Eric Hammond's blog post [Creating Public AMIs Securely for EC2](http://alestic.com/2011/06/ec2-ami-security), and his shell script [alestic-git-build-ami](https://github.com/alestic/alestic-git/blob/master/bin/alestic-git-build-ami).
 
 Important note: this script assumes that the VM archive can be run by the EC2/Openstack hypervisor.
 Potential pitfalls that this script does not resolve:
