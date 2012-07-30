@@ -39,8 +39,10 @@ if [ -z "$vm_imagefile" ]; then
         if [ -n "$response" ]; then
           do_download=true
         else
+          mv $build_folder/$base_imagefilename /tmp
+          rm -rf $build_folder/*
+          mv /tmp/$base_imagefilename $build_folder/$base_imagefilename
           if [ -n "$imagefile_iszip" ]; then
-            rm -rf $build_folder/*
             unzip $build_folder/$base_imagefilename -d $build_folder
           else
             tar -zxvf $build_folder/$base_imagefilename -C $build_folder
@@ -93,7 +95,7 @@ if [ -z "$vm_imagefile" ]; then
 fi
 
 # transform the vmdk into a raw image if necessary
-vm_image_actual_file_extension=`echo ${vm_imagefile#*.}`
+vm_image_actual_file_extension=`echo ${vm_imagefile##*.}`
 if [ "vmdk" = "$vm_image_actual_file_extension" ]; then
   if [ ! -f "$vm_imagefile.raw" ]; then
     echo "Make a raw disk from the vmdk $vm_imagefile"
@@ -131,27 +133,27 @@ fi
 
 
 if [ -z "$dont_mount" ]; then
-  echo "Mounting $imagefilename in $imagediri with $__dirname"
+  echo "Mounting $imagefilename in $imagedir with $__dirname"
   #$__dirname/lib/loop-mnt.sh $build_folder/$imagefilename $imagedir
 
-    # mount the image:
-    sudo umount $imagedir || true
-    sudo qemu-nbd -d /dev/nbd0 || true
+  # mount the image:
+  sudo umount $imagedir || true
+  sudo qemu-nbd -d /dev/nbd0 || true
 
-    # make sure there is nothing in the mounted directory
-    dir_nb=`ls $imagedir -1 | wc -l`
-    if [ "$dir_nb" != "0" ]; then
-      echo "The directory where the vm will be mounted is not empty. Bye!"
-      exit 1
-    fi
-    sudo modprobe nbd max_part=8
-    sudo qemu-nbd -c /dev/nbd0 $vm_imagefile
-    sudo mount /dev/nbd0p1 $imagedir
-    # make sure that we find the expected typcial linux file
-    if [ "$?" != "0" ]; then
-      echo "Unable to mount the disk: something happened"
-      exit 1
-    fi
+  # make sure there is nothing in the mounted directory
+  dir_nb=`ls $imagedir -1 | wc -l`
+  if [ "$dir_nb" != "0" ]; then
+    echo "The directory where the vm will be mounted is not empty. Bye!"
+    exit 1
+  fi
+  sudo modprobe nbd max_part=8
+  sudo qemu-nbd -c /dev/nbd0 $vm_imagefile
+  sudo mount /dev/nbd0p1 $imagedir
+  # make sure that we find the expected typcial linux file
+  if [ "$?" != "0" ]; then
+    echo "Unable to mount the disk: something happened"
+    exit 1
+  fi
 fi
 
 # Uncloud
